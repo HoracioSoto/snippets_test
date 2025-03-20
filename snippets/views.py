@@ -1,15 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views import View
-
-
-# class SnippetAdd(View):
-#    TODO: Implement this class to handle snippet creation, only for authenticated users.
-
-# class SnippetEdit(View):
-#    TODO: Implement this class to handle snippet editing. Allow editing only for the owner.
-
-# class SnippetDelete(View):
-#    TODO: Implement this class to handle snippet deletion. Allow deletion only for the owner.
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth import login, logout
 
 
 class SnippetDetails(View):
@@ -41,13 +34,50 @@ class SnippetsByLanguage(View):
         # TODO: Fetch snippets based on language
         return render(request, "index.html", {"snippets": []})  # Placeholder
 
+class Login(View):
+    """
+    View to handle user login.
+    """
+    def dispatch(self, request, *args, **kwargs):
+        """
+        Ensures the user is redirected to the index if it's already authenticated.
+        """
+        if request.user.is_authenticated:
+            return redirect('index')
+        return super().dispatch(request, *args, **kwargs)
 
-# class Login(View):
-#    TODO: Implement login view logic with AuthenticationForm and login handling.
+    def get(self, request):
+        """
+        Renders the login form if the user is not authenticated.
+        """
+        form = AuthenticationForm()
+        return render(request, 'login.html', {'form': form})
 
-# class Logout(View):
-#    TODO: Implement logout view logic.
+    def post(self, request):
+        """
+        Handles the login form submission.
+        """
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            if request.GET.get('next'):
+                return redirect(request.GET.get('next'))
+            else:
+                return redirect('index')
+        return render(request, 'login.html', {'form': form})
 
+
+class Logout(View):
+    """
+    View to handle user logout.
+    """
+    def get(self, request):
+        """
+        Logs out the user and redirects it to the index.
+        """
+        logout(request)
+        return redirect('index')
 
 class Index(View):
     def get(self, request, *args, **kwargs):
