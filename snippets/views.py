@@ -84,22 +84,40 @@ class SnippetDetails(View):
 
 
 class UserSnippets(View):
+    """
+    View to display all snippets of a specific user.
+    """
+    form_class = SnippetForm
+    model = Snippet
+
     def get(self, request, *args, **kwargs):
-        username = self.kwargs["username"]
-        # TODO: Fetch user snippets based on username and public/private logic
-        # snippets = Snippet.objects.filter(...)
+        username = kwargs["username"]
+        if request.user.is_authenticated and request.user.username == username:
+            snippets = Snippet.objects.filter(user__username=username)
+        else:
+            snippets = Snippet.objects.filter(user__username=username, public=True)
         return render(
             request,
             "snippets/user_snippets.html",
             {"snippetUsername": username, "snippets": snippets},
-        )  # Placeholder
+        )
 
 
 class SnippetsByLanguage(View):
+    """
+    View to display snippets filtered by language.
+    """
     def get(self, request, *args, **kwargs):
+        """
+        Renders all the public snippets filtered by an specific language.
+        """
         language = self.kwargs["language"]
-        # TODO: Fetch snippets based on language
-        return render(request, "index.html", {"snippets": []})  # Placeholder
+        return render(
+            request,
+            "index.html",
+            {"snippets": Snippet.objects.filter(language__slug=language, public=True)}
+        )
+
 
 class Login(View):
     """
@@ -147,6 +165,15 @@ class Logout(View):
         return redirect('index')
 
 class Index(View):
+    """
+    View to render the index page with all public snippets.
+    """
     def get(self, request, *args, **kwargs):
-        # TODO: Fetch and display all public snippets
-        return render(request, "index.html", {"snippets": []})  # Placeholder
+        """
+        Renders the index page with all public snippets.
+        """
+        return render(
+            request,
+            "index.html",
+            {"snippets": Snippet.objects.filter(public=True)}
+        )
