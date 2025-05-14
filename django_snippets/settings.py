@@ -27,7 +27,7 @@ SECRET_KEY = config("SECRET_KEY", default="Secret Key")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG", default=False, cast=bool)
 
-ALLOWED_HOSTS = ["django-snippets-crud.herokuapp.com/"]
+ALLOWED_HOSTS = ["*"]
 
 # Application definition
 
@@ -121,6 +121,10 @@ STATIC_URL = "/static/"
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_ROOT = os.path.join(PROJECT_DIR, "static")
 
+LOGIN_URL = "/login/"
+LOGOUT_URL = "/logout/"
+LOGIN_REDIRECT_URL="/"
+
 CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 # Activate Django-Heroku.
@@ -137,6 +141,7 @@ EMAIL_USE_TLS = config("EMAIL_USE_TLS", default="")
 
 CELERY_BROKER_URL = config("REDIS_URL", default="")
 CELERY_RESULT_BACKEND = config("REDIS_URL", default="")
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 CELERY_ACCEPT_CONTENT = ["application/json"]
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TASK_SERIALIZER = "json"

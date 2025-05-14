@@ -5,14 +5,20 @@ from django.db import models
 
 
 class Language(models.Model):
+    """
+    Model representing a programming language.
+    """
     name = models.CharField(max_length=50)
     slug = models.CharField(max_length=50)
 
     def __str__(self):
-        return self.name
+        return str(self.name)
 
 
 class Snippet(models.Model):
+    """
+    Model representing a code snippet.
+    """
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

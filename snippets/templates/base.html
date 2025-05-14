@@ -30,6 +30,10 @@
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <a class="dropdown-item" href="{% url 'snippet_add' %}">Cargar Snippets</a>
                         <a class="dropdown-item" href="{% url 'index' %}">Listado de Snippets</a>
+                        {% if user.is_authenticated %}
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="{% url 'user_snippets' username=user.username %}">Mis Snippets</a>
+                        {% endif %}
                     </div>
                 </li>
                 {% if user.is_authenticated %}
@@ -51,6 +55,9 @@
 </div>
 
 <!-- Optional JavaScript -->
+<script>
+    const confirmDeleteMessage = "¿Estás seguro de que deseas eliminar este snippet?";
+</script>
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
